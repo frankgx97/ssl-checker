@@ -1,0 +1,22 @@
+stages:
+    - build
+    - provision
+
+    image: ubuntu
+  
+    build:
+        stage: build
+        script:
+            - echo $CONFIG > src/config.py
+            - bash build.sh
+
+    provision:
+        stage: provision
+        before_script:
+            - curl -LO https://raw.github.com/robertpeteuil/terraform-installer/master/terraform-install.sh
+            - chmod +x terraform-install.sh
+            - mkdir -p ~/.aws
+            - echo $AWS_CRED > ~/.aws/credentials
+            - terraform init
+        script:
+            - terraform apply -auto-approve
