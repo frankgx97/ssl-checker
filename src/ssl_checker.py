@@ -2,7 +2,7 @@ import socket
 import ssl
 import re,sys,os,datetime
 import config
-import sites
+import site_config
 from email_service import EmailService
 
 def ssl_expiry_date(domainname):
@@ -56,7 +56,7 @@ def send_mail(recipients,title,content,config):
     return
 
 def handler(event, context):
-    sites = sites.SITE_LIST
+    sites = site_config.SITE_LIST
     send = False
     line_template = '<p>{status}:Site {site}, {days} days left to expire.</p>\n'
     content = ''

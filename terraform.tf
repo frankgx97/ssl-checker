@@ -1,5 +1,7 @@
-provider "aws" {
-  region = "us-east-1"
+provider "aws" {}
+
+variable "accountId" {
+  type = string
 }
 
 resource "aws_cloudwatch_event_rule" "one_day" {
@@ -37,8 +39,6 @@ resource "aws_lambda_function" "ssl_checker_lambda" {
   source_code_hash = "${filebase64sha256("lambda.zip")}"
 }
 
-# IAM role which dictates what other AWS services the Lambda function
-# may access.
 resource "aws_iam_role" "role" {
   name = "ssl_checker_lambda"
 
@@ -57,4 +57,15 @@ resource "aws_iam_role" "role" {
    ]
  }
  EOF
+}
+
+terraform {
+  backend "s3" {
+    # Replace this with your bucket name!
+    bucket         = "terraform-state-ssl-checker"
+    key            = "global/s3/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-lock-ssl-checker"
+    encrypt        = true
+  }
 }

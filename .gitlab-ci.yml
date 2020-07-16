@@ -1,22 +1,18 @@
 stages:
     - build
-    - provision
 
-    image: ubuntu
-  
-    build:
-        stage: build
-        script:
-            - echo $CONFIG > src/config.py
-            - bash build.sh
+image: ubuntu:bionic
 
-    provision:
-        stage: provision
-        before_script:
-            - curl -LO https://raw.github.com/robertpeteuil/terraform-installer/master/terraform-install.sh
-            - chmod +x terraform-install.sh
-            - mkdir -p ~/.aws
-            - echo $AWS_CRED > ~/.aws/credentials
-            - terraform init
-        script:
-            - terraform apply -auto-approve
+build:
+    stage: build
+    before_script:
+        - apt update
+        - apt install -y zip curl unzip
+        - curl -LO https://raw.github.com/robertpeteuil/terraform-installer/master/terraform-install.sh
+        - chmod +x terraform-install.sh
+        - ./terraform-install.sh
+        - terraform init
+    script:
+        - echo $CONFIG > src/config.py
+        - bash build.sh
+        - terraform apply -auto-approve -var 'accountId=$AWS_ACCOUNT_ID'
