@@ -16,3 +16,6 @@ build:
         - echo $CONFIG > src/config.py
         - bash build.sh
         - terraform apply -auto-approve -var 'accountId=$AWS_ACCOUNT_ID'
+    only:
+        - master
+
